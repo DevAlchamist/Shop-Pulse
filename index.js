@@ -96,17 +96,17 @@ app.use(
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
   })
-);
-
-
-app.use(passport.authenticate("session"));
-
-app.use(express.json()); //! To parse req.body as JSON
-
+  );
+  
+  
+  app.use(passport.authenticate("session"));
+  
+  app.use(express.json()); //! To parse req.body as JSON
+  
 mongoose
-  .connect(process.env.MONGODB_CONNECT)
-  .then((res) => console.log("mongo Connected"))
-  .catch((error) => console.log(error));
+.connect(process.env.MONGODB_CONNECT)
+.then((res) => console.log("mongo Connected"))
+.catch((error) => console.log(error));
 
 app.use("/products", isAuth(), productRouter);
 app.use("/categories", isAuth(), categoriesRouter);
@@ -129,7 +129,7 @@ passport.use(
       if (!user) {
         done(null, false, { message: "No User Found" });
       }
-
+      
       crypto.pbkdf2(
         password,
         user.salt,
@@ -143,19 +143,19 @@ passport.use(
           const token = jwt.sign(sanitizeUser(user), process.env.JWT_SECRET_KEY);
           done(null, { id: user.id, role: user.role, token });
         }
-      );
-    } catch (error) {
-      done(error);
-    }
-  })
-);
-
-passport.use(
-  "jwt",
-  new JwtStrategy(opts, async function (jwt_payload, done) {
-    console.log({ jwt_payload });
-    try {
-      const user = await userModel.findById(jwt_payload.id);
+        );
+      } catch (error) {
+        done(error);
+      }
+    })
+    );
+    
+    passport.use(
+      "jwt",
+      new JwtStrategy(opts, async function (jwt_payload, done) {
+        console.log({ jwt_payload });
+        try {
+          const user = await userModel.findById(jwt_payload.id);
       if (user) {
         return done(null, sanitizeUser(user)); // this calls serializer
       } else {
@@ -166,12 +166,12 @@ passport.use(
       return done(err, false);
     }
   })
-);
-
-// used to create session variable when req.user is being called from callbacks
-passport.serializeUser(function (user, cb) {
-  process.nextTick(function () {
-    console.log("serializing ", user);
+  );
+  
+  // used to create session variable when req.user is being called from callbacks
+  passport.serializeUser(function (user, cb) {
+    process.nextTick(function () {
+      console.log("serializing ", user);
     return cb(null, { id: user.id, role: user.role });
   });
 });
@@ -198,7 +198,7 @@ const stripe = require("stripe")(process.env.STRIPE_SERVER_KEY);
 app.post("/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
   console.log(totalAmount);
-
+  
   // user billing info had to make dynamic (static : for just testing purposes)
   const customer = await stripe.customers.create({
     name: "Jenny Rosen",
@@ -210,7 +210,7 @@ app.post("/create-payment-intent", async (req, res) => {
       country: "US",
     },
   });
-
+  
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalAmount * 100, // for decimal compensation
@@ -222,10 +222,14 @@ app.post("/create-payment-intent", async (req, res) => {
       enabled: true,
     },
   });
-
+  
   res.send({
     clientSecret: paymentIntent.client_secret,
   });
 });
+
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname,'build', 'index.html'))
+})
 
 app.listen(process.env.PORT, () => console.log("server started"));
