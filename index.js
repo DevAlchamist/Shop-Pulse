@@ -196,7 +196,7 @@ passport.deserializeUser(function (user, cb) {
 const stripe = require("stripe")(process.env.STRIPE_SERVER_KEY);
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { totalAmount,orderId } = req.body;
+  const { totalAmount } = req.body;
   console.log(totalAmount);
   
   // user billing info had to make dynamic (static : for just testing purposes)
@@ -221,9 +221,6 @@ app.post("/create-payment-intent", async (req, res) => {
     automatic_payment_methods: {
       enabled: true,
     },
-    metadata:{
-      order_id: orderId
-    }
   });
   
   res.send({
