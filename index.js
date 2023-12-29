@@ -38,8 +38,8 @@ app.post(
         const order = await orderModel.findById(
           paymentIntentSucceeded.metadata.orderId
         );
-        order.paymentStatus = 'received'
-        await order.save()
+        order.paymentStatus = "received";
+        await order.save();
         // Then define and call a function to handle the event payment_intent.succeeded
         break;
       // ... handle other event types
@@ -102,6 +102,8 @@ app.use("/user", isAuth(), userRouter);
 app.use("/auth", authRouter);
 app.use("/cart", isAuth(), cartRouter);
 app.use("/orders", isAuth(), orderRouter);
+
+
 // Passport strategies
 passport.use(
   "local",

@@ -17,6 +17,12 @@ const cartSchema = new Schema({
     ref: "User",
     required: true,
   },
+  size: {
+    type: Schema.Types.Mixed,
+  },
+  color: {
+    type: Schema.Types.Mixed, 
+  },
 
 });
 
